@@ -1,0 +1,15 @@
+# Ignore Python venv
+server/venv/
+
+# Node modules
+client/node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Env & secrets
+*.env
+
+# OS junk
+.DS_Store
