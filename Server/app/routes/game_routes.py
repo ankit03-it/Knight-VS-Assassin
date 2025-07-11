@@ -1,10 +1,16 @@
 from flask import Blueprint, request, jsonify
-from ..models import db, Game, MoveHistory  # ⬅️ Make sure MoveHistory is imported
+from ..models import db, Game, MoveHistory, User
 import chess
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+
+# 🔐 Secret key for JWT (move to .env or config.py in production)
+SECRET_KEY = "your_secret_key_here"
 
 game_bp = Blueprint("game", __name__)
 
+# ✅ Health Check Route
 @game_bp.route("/test")
 def test_game():
     return {"message": "Game route working"}
@@ -125,3 +131,48 @@ def get_move_history(game_id):
         }
         for m in moves
     ])
+
+# ✅ SIGNUP ROUTE
+@game_bp.route('/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    email = data.get('email')
+    username = data.get('username')
+    password = data.get('password')
+
+    if not email or not username or not password:
+        return jsonify({'error': 'Missing fields'}), 400
+
+    existing_user = User.query.filter_by(email=email).first()
+    if existing_user:
+        return jsonify({'error': 'Email already in use'}), 409
+
+    user = User(username=username, email=email)
+    user.set_password(password)
+
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({'message': 'Signup successful'}), 201
+
+# ✅ LOGIN ROUTE
+@game_bp.route('/auth/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+
+    if user and check_password_hash(user.password, password):
+        token = jwt.encode(
+            {'user_id': user.id, 'exp': datetime.utcnow() + datetime.timedelta(hours=24)},
+            SECRET_KEY, algorithm='HS256'
+        )
+        return jsonify({
+            'message': 'Login successful',
+            'token': token,
+            'username': user.username
+        }), 200
+
+    return jsonify({'error': 'Invalid credentials'}), 401
