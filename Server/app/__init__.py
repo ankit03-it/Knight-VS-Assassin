@@ -19,5 +19,10 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(game_bp, url_prefix="/api/game")
 
+    from .routes.dashboard_routes import dashboard_bp
+    app.register_blueprint(dashboard_bp, url_prefix="/api")
+
+
+
 
     return app

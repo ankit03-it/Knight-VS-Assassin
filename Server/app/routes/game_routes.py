@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
 from ..models import db, Game, MoveHistory, User
 import chess
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
+from app.utils.token_required import token_required
 
 # 🔐 Secret key for JWT (move to .env or config.py in production)
 SECRET_KEY = "your_secret_key_here"
@@ -155,24 +156,47 @@ def signup():
 
     return jsonify({'message': 'Signup successful'}), 201
 
+
 # ✅ LOGIN ROUTE
 @game_bp.route('/auth/login', methods=['POST'])
 def login():
+    print("🔥 Login route triggered")
+
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
 
-    user = User.query.filter_by(email=email).first()
+    print("📩 Incoming login request:", data)
 
-    if user and check_password_hash(user.password, password):
+    user = User.query.filter_by(email=email).first()
+    print("🔍 User from DB:", user)
+
+    if user:
+        print("🔐 Checking password...")
+        print("🧠 Result:", check_password_hash(user.password_hash, password))
+
+    if user and check_password_hash(user.password_hash, password):
         token = jwt.encode(
-            {'user_id': user.id, 'exp': datetime.utcnow() + datetime.timedelta(hours=24)},
+            {'user_id': user.id, 'exp': datetime.utcnow() + timedelta(hours=24)},
             SECRET_KEY, algorithm='HS256'
         )
+        if isinstance(token, bytes):
+            token = token.decode('utf-8')
+
+        print("✅ Token:", token)
+
         return jsonify({
             'message': 'Login successful',
             'token': token,
             'username': user.username
         }), 200
 
+    print("❌ Login failed: Invalid credentials")
     return jsonify({'error': 'Invalid credentials'}), 401
+
+
+
+
+
+
+
