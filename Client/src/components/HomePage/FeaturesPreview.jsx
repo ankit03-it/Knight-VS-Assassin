@@ -4,7 +4,7 @@ import { Users, Bot, Brain, Globe } from 'lucide-react';
 const FeaturesPreview = () => {
   const features = [
     { icon: Users, label: 'Player vs Player', color: 'text-blue-400' },
-    { icon: Bot, label: 'Player vs AI', color: 'text-green-400' },
+    { icon: Bot, label: 'Player vs Computer', color: 'text-green-400' },
     { icon: Brain, label: 'Strategy Mind', color: 'text-purple-400' },
     { icon: Globe, label: 'Online Challenge', color: 'text-orange-400' }
   ];
