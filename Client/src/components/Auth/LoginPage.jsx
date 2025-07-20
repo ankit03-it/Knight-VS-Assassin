@@ -11,7 +11,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  const { goToHomePage, goToSignUp, goToGame } = useNavigation();
+  const { goToHomePage, goToSignUp, goToDashboard } = useNavigation(); // Updated to use goToDashboard
   const { login } = useAuth();
 
   const validateForm = () => {
@@ -36,7 +36,7 @@ const LoginPage = () => {
     const res = await login(formData.email, formData.password);
     if (res.success) {
       setMessage({ type: 'success', text: res.message });
-      setTimeout(() => goToGame(), 1000);
+      setTimeout(() => goToDashboard(), 1000); // Redirect to dashboard instead of game
     } else {
       setMessage({ type: 'error', text: res.message });
     }
@@ -115,7 +115,7 @@ const LoginPage = () => {
             </form>
 
             <div className="mt-6 text-center text-gray-400">
-              Don’t have an account?{' '}
+              Don't have an account?{' '}
               <button onClick={goToSignUp} className="text-purple-400 hover:text-purple-300">Sign up here</button>
             </div>
           </div>

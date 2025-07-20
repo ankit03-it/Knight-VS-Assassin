@@ -2,6 +2,8 @@ import React from 'react';
 import HomePage from './components/HomePage/HomePage.jsx';
 import SignupPage from './components/Auth/SignupPage';
 import LoginPage from './components/Auth/LoginPage';
+import Dashboard from './components/Dashboard/Dashboard.jsx';
+
 import { NavigationProvider, useNavigation } from './context/NavigationContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './index.css';
@@ -35,9 +37,13 @@ const AppContent = () => {
           </div>
         ) : <LoginPage />;
       case ROUTES.LEADERBOARD:
-        return <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
-          <h1 className="text-4xl">Leaderboard Page - To be implemented</h1>
-        </div>;
+        return (
+          <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+            <h1 className="text-4xl">Leaderboard Page - To be implemented</h1>
+          </div>
+        );
+      case ROUTES.DASHBOARD:
+        return isAuthenticated ? <Dashboard /> : <LoginPage />;
       default:
         return <HomePage />;
     }

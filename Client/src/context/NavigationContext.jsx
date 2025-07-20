@@ -6,7 +6,8 @@ export const ROUTES = {
   LOGIN: 'login',
   GAME: 'game',
   PROFILE: 'profile',
-  LEADERBOARD: 'leaderboard'
+  LEADERBOARD: 'leaderboard',
+  DASHBOARD: 'dashboard' // Added dashboard route
 };
 
 const NavigationContext = createContext();
@@ -37,6 +38,7 @@ export const NavigationProvider = ({ children }) => {
     goToGame: (mode) => goTo(ROUTES.GAME, { mode }),
     goToProfile: (id) => goTo(ROUTES.PROFILE, { id }),
     goToLeaderboard: () => goTo(ROUTES.LEADERBOARD),
+    goToDashboard: () => goTo(ROUTES.DASHBOARD), // Added dashboard navigation
     ROUTES
   };
 
